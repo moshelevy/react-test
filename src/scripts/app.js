@@ -18299,25 +18299,110 @@ module.exports=require('b6Dds6');
 'use strict';
 
 var React = require('react'),
-    ExampleApp;
+    SearchBox;
 
-ExampleApp = React.createClass({displayName: "ExampleApp",
-    render: function() {
-        return (
-        	/*jshint ignore:start */
+// ExampleApp = React.createClass({
+//     render: function() {
+//         return (
+//             /*jshint ignore:start */
+//             <div>
+//                 <h2>Hello, World</h2>
+//             </div>
+//             /*jshint ignore:end */
+//         );
+//     }
+// });
+
+// React.render(
+//     /*jshint ignore:start */
+//     <ExampleApp />,
+//     /*jshint ignore:end */
+//     document.getElementById('app')
+// );
+
+  var clientId='d652006c469530a4a7d6184b18e16c81',
+      baseUrl='https://api.soundcloud.com/tracks';
+
+var SoundcloudSearch = React.createClass({displayName: "SoundcloudSearch",
+  getInitialState: function() {
+    return {};
+  },
+
+  searchText: function() {
+    this.props.onSearchText(
+      this.refs.searchInput.getDOMNode().value
+    );
+  },
+
+  render: function() {
+    return (
+      React.createElement("div", {className: "input-group"}, 
+          React.createElement("input", {type: "text", ref: "searchInput", className: "form-control", placeholder: "Filter Songs"}), 
+          React.createElement("span", {className: "input-group-btn"}, 
+          React.createElement("button", {className: "btn btn-success", onClick: this.searchText, type: "button"}, "Go")
+      )
+      )
+    );
+  }
+});
+
+var SearchResults = React.createClass({displayName: "SearchResults",
+  getInitialState: function() {
+    return {};
+  },
+  render: function() {
+      return ( 
+        React.createElement("div", {className: "list-group"}, 
+            this.props.results.map(function(result) {
+              return React.createElement("a", {href: "", className: "list-group-item list-group-item-warning", songId: result.id}, result.title);
+            })
+        )
+      );
+  }
+
+});
+
+var SearchBox = React.createClass({displayName: "SearchBox",
+  getInitialState: function() {
+    return {
+      term: '',
+      url: baseUrl+'?client_id='+clientId+'&limit=6&q=',
+      results:[]
+    };
+  },
+  searchText: function(term){
+    var query = this.state.url+term;
+    $.get(query, function(result) {
+      if (this.isMounted()) {
+        this.state.results = result;
+        console.log(this.state.results);
+      }
+    }.bind(this));
+  },
+  render: function() {
+    return (
+      React.createElement("div", {className: "box bg-success"}, 
+          React.createElement(SoundcloudSearch, {onSearchText: this.searchText, term: this.state.term}), 
+          React.createElement(SearchResults, {results: this.state.results}), 
+
+          React.createElement("div", {className: "box-footer"}, 
             React.createElement("div", null, 
-            	React.createElement("h2", null, "Hello, World")
+                React.createElement("a", {href: ""}, React.createElement("i", {className: "fa fa-long-arrow-right"})), 
+                React.createElement("div", {className: "pull-right"}, 
+                  React.createElement("a", {href: ""}, React.createElement("i", {className: "fa fa-list"})), 
+                  React.createElement("a", {href: ""}, React.createElement("i", {className: "fa fa-th-large"}))
+                )
             )
-            /*jshint ignore:end */
-        );
-    }
+          )
+      )
+    );
+  }
 });
 
 React.render(
-    /*jshint ignore:start */
-    React.createElement(ExampleApp, null),
-    /*jshint ignore:end */
-    document.getElementById('app')
+  React.createElement(SearchBox, null),
+  document.getElementById('test')
 );
+
 
 },{"react":"b6Dds6"}]},{},[149])
