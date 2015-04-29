@@ -8,14 +8,14 @@
         <title>react-test</title>
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width">
-        
+
         <!-- build:css assets/styles/vendors.css -->
         <!-- bower:css -->
         <link type="text/css" rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.css" />
         <link type="text/css" rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap-theme.css" />
         <!-- endbower -->
         <!-- endbuild -->
-        
+
         <link type="text/css" rel="stylesheet" href="assets/styles/main.css">
     </head>
     <body>
@@ -28,15 +28,27 @@
         <div class="container">
             <div class="row">
                 <div class="col-sm-4"><div class="bg-success" style="height: 500px; padding: 15px;">
-                        <input type="text" class="form-control" placeholder="Filter Songs"/>
+                  <div class="input-group">
+                    <input type="text" class="form-control" placeholder="Filter Songs"/>
+                    <span class="input-group-btn">
+                      <button class="btn btn-success" type="button"><i class="fa fa-times"></i>Go!</button>
+                    </span>
+                  </div><!-- /input-group -->
+                  <ul class="list-group" style="padding-top:15px;">
+                    <li class="list-group-item list-group-item-warning">Cras justo odio</li>
+                    <li class="list-group-item list-group-item-warning">Dapibus ac facilisis in</li>
+                    <li class="list-group-item list-group-item-warning">Morbi leo risus</li>
+                    <li class="list-group-item list-group-item-warning">Porta ac consectetur ac</li>
+                    <li class="list-group-item list-group-item-warning">Vestibulum at eros</li>
+                  </ul>
                 </div>
             </div>
                 <div class="col-sm-4"><div class="bg-success" style="height: 500px; padding: 15px;">
-                        
+
                 </div>
             </div>
                 <div class="col-sm-4"><div class="bg-success" style="height: 500px; padding: 15px;">
-                        
+
                 </div>
             </div>
             </div>
@@ -46,8 +58,8 @@
         <!-- bower:js -->
         <script src="bower_components/jquery/dist/jquery.js"></script>
         <script src="bower_components/bootstrap/dist/js/bootstrap.js"></script>
-        
-        
+
+
         <script src="bower_components/es5-shim/es5-shim.js"></script>
         <script src="bower_components/es6-shim/es6-shim.js"></script>
         <!-- endbower -->
