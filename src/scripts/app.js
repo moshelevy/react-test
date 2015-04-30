@@ -18298,42 +18298,24 @@ module.exports=require('b6Dds6');
 
 'use strict';
 
-var React = require('react'),
-    SearchBox;
+var React = require('react');
 
-// ExampleApp = React.createClass({
-//     render: function() {
-//         return (
-//             /*jshint ignore:start */
-//             <div>
-//                 <h2>Hello, World</h2>
-//             </div>
-//             /*jshint ignore:end */
-//         );
-//     }
-// });
-
-// React.render(
-//     /*jshint ignore:start */
-//     <ExampleApp />,
-//     /*jshint ignore:end */
-//     document.getElementById('app')
-// );
-
-  var clientId='d652006c469530a4a7d6184b18e16c81',
-      baseUrl='https://api.soundcloud.com/tracks';
+var clientId='d652006c469530a4a7d6184b18e16c81',
+    baseUrl='https://api.soundcloud.com/tracks',
+    searchResults=[],
+    resentSearches=[],
+    pagination=0;
 
 var SoundcloudSearch = React.createClass({displayName: "SoundcloudSearch",
   getInitialState: function() {
     return {};
   },
-
   searchText: function() {
+    pagination = 0;
     this.props.onSearchText(
       this.refs.searchInput.getDOMNode().value
     );
   },
-
   render: function() {
     return (
       React.createElement("div", {className: "input-group"}, 
@@ -18351,43 +18333,51 @@ var SearchResults = React.createClass({displayName: "SearchResults",
     return {};
   },
   render: function() {
+
+    var val='';
+    if(Object.keys(this.props.results).length !== 0){
+    val = this.props.results.map(function(result) {
+            return React.createElement("a", {href: result.id, className: "list-group-item list-group-item-warning"}, result.title);
+        });
+    }
       return ( 
         React.createElement("div", {className: "list-group"}, 
-            this.props.results.map(function(result) {
-              return React.createElement("a", {href: "", className: "list-group-item list-group-item-warning", songId: result.id}, result.title);
-            })
+            val
         )
       );
   }
-
 });
 
 var SearchBox = React.createClass({displayName: "SearchBox",
   getInitialState: function() {
     return {
       term: '',
-      url: baseUrl+'?client_id='+clientId+'&limit=6&q=',
-      results:[]
+      results:{}
     };
   },
   searchText: function(term){
-    var query = this.state.url+term;
+    this.state.term = term;
+    var query = soundcloudUrl(baseUrl,clientId,term,6,pagination);
     $.get(query, function(result) {
       if (this.isMounted()) {
-        this.state.results = result;
-        console.log(this.state.results);
+        this.setState({results:result})
+        searchResults = result;
       }
     }.bind(this));
+  },
+  nextPage: function() {
+      pagination= pagination+6;
+      this.searchText(this.state.term);
   },
   render: function() {
     return (
       React.createElement("div", {className: "box bg-success"}, 
-          React.createElement(SoundcloudSearch, {onSearchText: this.searchText, term: this.state.term}), 
+          React.createElement(SoundcloudSearch, {onSearchText: this.searchText}), 
           React.createElement(SearchResults, {results: this.state.results}), 
 
           React.createElement("div", {className: "box-footer"}, 
             React.createElement("div", null, 
-                React.createElement("a", {href: ""}, React.createElement("i", {className: "fa fa-long-arrow-right"})), 
+                React.createElement("a", {href: ""}, React.createElement("i", {className: "fa fa-long-arrow-right nextPage", term: this.state.term, onClick: this.nextPage})), 
                 React.createElement("div", {className: "pull-right"}, 
                   React.createElement("a", {href: ""}, React.createElement("i", {className: "fa fa-list"})), 
                   React.createElement("a", {href: ""}, React.createElement("i", {className: "fa fa-th-large"}))
@@ -18399,10 +18389,129 @@ var SearchBox = React.createClass({displayName: "SearchBox",
   }
 });
 
+var ImageBox = React.createClass({displayName: "ImageBox",
+  getInitialState: function() {
+    return {
+      image: 'http://placehold.it/300x300',
+      audio:'',
+      songId:0
+    };
+  },
+  playSong: function(){
+    if($('.songImg').attr('songid')){
+        var audio = document.getElementById('audio');
+        audio.load();
+        audio.play();
+        audio.setAttributeNode(document.createAttribute("controls")); 
+    }
+  },
+  render: function(){
+    return(
+        React.createElement("div", {className: "box bg-success"}, 
+            React.createElement("img", {className: "songImg img-responsive", width: "300px", songid: this.state.songId, src: this.state.image, onClick: this.playSong}), 
+            React.createElement("audio", {id: "audio"}, 
+              React.createElement("source", {src: "https://api.soundcloud.com/tracks/72428264/stream?client_id=d652006c469530a4a7d6184b18e16c81", type: "audio/ogg"}), 
+              React.createElement("source", {src: "https://api.soundcloud.com/tracks/72428264/stream?client_id=d652006c469530a4a7d6184b18e16c81", type: "audio/mpeg"}), 
+                "Your browser does not support the audio element."
+            )
+        )
+        );
+  }
+});
+
+var HistoryBox = React.createClass({displayName: "HistoryBox",
+    getInitialState: function() {
+        return {
+          results: []
+        };
+    },
+    render: function(){
+        return(
+            React.createElement("div", {className: "box bg-success"}, 
+              React.createElement("div", {className: "text-center"}, "Resent Searches"), 
+                React.createElement(SearchResults, {results: this.state.results})
+            )
+        );
+    }
+});
+
 React.render(
   React.createElement(SearchBox, null),
-  document.getElementById('test')
+  document.getElementById('searchBox')
+);
+React.render(
+  React.createElement(ImageBox, null),
+  document.getElementById('imageBox')
+);
+React.render(
+  React.createElement(HistoryBox, null),
+  document.getElementById('historyBox')
 );
 
+$(document).ready(function() {
+    $('#searchBox, #historyBox').on('click', function(e) {
+        if ($(e.target).is('a.list-group-item')) {
+            e.preventDefault();
+            searchResults.forEach(function(entry) {
+                if (entry.id.toString() === $(e.target).attr("href")) {
+                    if (entry.artwork_url) {
+                        $(".songImg").attr({
+                            'src': entry.artwork_url,
+                            'songId': entry.id
+                        });
+                    } else
+                        $(".songImg").attr({
+                            'src': 'http://placehold.it/300x300',
+                            'songId': entry.id
+                        });
 
+                $('#audio source:first-child').attr({'src':entry.stream_url+'?client_id='+clientId,'type':'audio/ogg'})
+                .next().attr({'src':entry.stream_url+'?client_id='+clientId,'type':'audio/mp3'});
+                }
+            });
+        }
+    });
+
+  $('#searchBox').on('click', function(e) {
+      if ($(e.target).is('a.list-group-item')) {
+        if(!checkDuplicate(resentSearches,$(e.target).attr('href'))){
+              resentSearches.unshift({'id':$(e.target).attr('href'),'title':$(e.target).text()});
+              if (resentSearches.length > 6) {
+                resentSearches.pop();
+                $('#historyBox').find('.list-group .list-group-item:last-child').remove();
+              }
+              $('#historyBox').find('.list-group').prepend('<a href='+$(e.target).attr('href')+
+                                                            ' class="list-group-item list-group-item-warning">'+
+                                                            $(e.target).text()+'</a>');
+              console.log(resentSearches.length);
+          }
+      }
+  });
+
+  $('.nextPage').click(function(e){
+    e.preventDefault();
+  });
+});
+
+function checkDuplicate(array, val){
+    for (var i = 0; i < array.length; i++) {
+        if(array[i].id === val){ return true}
+    };
+    return false;
+}
+function soundcloudUrl(base,id,q,limit,offset){
+    var tempUrl=base+'?client_id='+id;
+    if(q){
+        tempUrl+='&q='+q;
+    }
+    if(limit){
+        tempUrl+='&limit='+limit;
+    }
+    if(offset){
+        if(offset !== 0){
+            tempUrl+='&offset='+offset;
+        }
+    }
+    return tempUrl;
+}
 },{"react":"b6Dds6"}]},{},[149])

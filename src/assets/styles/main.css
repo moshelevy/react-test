@@ -1,1 +1,26 @@
 /* Main.css */
+.box{
+  height: 500px; 
+  padding: 15px;
+  position: relative;
+}
+.box > .text-center{
+  font-size: 18px;
+}
+.box-footer{
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  padding-left: 15px;
+  padding-right: 15px;
+}
+.box-footer .fa-long-arrow-right{
+  font-size: 30px;
+}
+.box-footer > .pull-right{
+  line-height: 30px;
+}
+.list-group{
+  margin-top:15px;
+}
