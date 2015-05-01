@@ -1,8 +1,12 @@
 /* Main.css */
+.container{
+  margin: 50px auto;
+}
 .box{
-  height: 500px; 
+  height: 700px;
   padding: 15px;
   position: relative;
+  margin-top: 10px;
 }
 .box > .text-center{
   font-size: 18px;
@@ -18,9 +22,28 @@
 .box-footer .fa-long-arrow-right{
   font-size: 30px;
 }
-.box-footer > .pull-right{
+.box-footer .pull-right{
   line-height: 30px;
+}
+.box-footer i{
+  padding:0 5px;
 }
 .list-group{
   margin-top:15px;
+}
+.tileList{
+  height: 200px;
+  padding: 5px;
+}
+img{
+  margin: 5px auto;
+}
+.songImg{
+  margin: 50px auto 0;
+}
+#audio{
+  margin: -30px auto 0;
+  display: block;
+  width: 100%;
+  max-width: 300px;
 }
