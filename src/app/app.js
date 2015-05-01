@@ -249,13 +249,6 @@ function soundcloudUrl(base,id,q,limit,offset){
     return tempUrl;
 }
 
-//create animation
-function anime(e,hor,ver) {
-  var pos = (e.target).getBoundingClientRect();
-  $(e.target).clone().css({'position':'absolute','top':pos.bottom-pos.height,'left':pos.left,'width':pos.width})
-            .appendTo('body').stop(true, true).fadeOut({ duration: 400, queue: false }).animate({'bottom':pos.bottom+ver,'left': pos.left+hor},600);
-}
-
 //find the item data, set the image and audio
 function searchAndCreate(array,e) {
   var item =[];
